@@ -10,14 +10,11 @@
         <Description>SharpMixin (SharpASM)</Description>
         <PackageProjectUrl>https://github.com/YELANDAOKONG/SharpMixin</PackageProjectUrl>
         <RepositoryUrl>https://github.com/YELANDAOKONG/SharpMixin</RepositoryUrl>
+        <PackageId>SharpMC.SharpMixin</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="SharpMC.SharpASM" Version="1.0.3" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Utilities\" />
     </ItemGroup>
 
 </Project>
