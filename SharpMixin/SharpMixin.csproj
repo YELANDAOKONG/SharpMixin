@@ -18,4 +18,9 @@
       <PackageReference Include="SharpMC.SharpASM" Version="1.0.3.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Core\" />
+      <Folder Include="Utilities\" />
+    </ItemGroup>
+
 </Project>
