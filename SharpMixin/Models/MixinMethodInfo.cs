@@ -1,4 +1,5 @@
 using System.Reflection;
+using SharpASM.Models;
 using SharpASM.Models.Code;
 using SharpMixin.Attributes;
 using SharpMixin.Exceptions;
@@ -16,12 +17,11 @@ public class MixinMethodInfo
         Attribute = attribute ?? throw new ArgumentNullException(nameof(attribute));
     }
 
-    public List<Code> Invoke(List<Code> originalCodes)
+    public List<Code> Invoke(Class clazz, List<Code> originalCodes)
     {
         try
         {
-            // Pass both className (from attribute) and codes
-            var result = Method.Invoke(null, new object[] { Attribute.ClassName, originalCodes });
+            var result = Method.Invoke(null, new object[] { clazz, originalCodes });
             return (List<Code>)result!;
         }
         catch (TargetInvocationException ex)
@@ -31,6 +31,7 @@ public class MixinMethodInfo
                 ex.InnerException ?? ex);
         }
     }
+
 
     public bool MatchesTarget(string className, string methodName, string methodSignature)
     {

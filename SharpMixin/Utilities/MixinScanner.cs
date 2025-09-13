@@ -1,4 +1,5 @@
 using System.Reflection;
+using SharpASM.Models;
 using SharpASM.Models.Code;
 using SharpMixin.Attributes;
 using SharpMixin.Models;
@@ -68,19 +69,17 @@ public static class MixinScanner
     {
         if (!method.IsStatic)
             return false;
-        
+
         var parameters = method.GetParameters();
         if (parameters.Length != 2) // Expect 2 parameters now
             return false;
-        
-        // First parameter should be string (for class name)
-        if (parameters[0].ParameterType != typeof(string))
+
+        if (parameters[0].ParameterType != typeof(Class))
             return false;
-        
-        // Second parameter should be List<Code>
+
         if (!IsListOfCode(parameters[1].ParameterType))
             return false;
-        
+
         return IsListOfCode(method.ReturnType);
     }
 
