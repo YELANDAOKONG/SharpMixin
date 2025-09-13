@@ -11,6 +11,7 @@
         <PackageProjectUrl>https://github.com/YELANDAOKONG/SharpMixin</PackageProjectUrl>
         <RepositoryUrl>https://github.com/YELANDAOKONG/SharpMixin</RepositoryUrl>
         <PackageId>SharpMC.SharpMixin</PackageId>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/YELANDAOKONG/SharpMixin/refs/heads/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
