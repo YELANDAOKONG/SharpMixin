@@ -68,19 +68,20 @@ public static class MixinScanner
     {
         if (!method.IsStatic)
             return false;
-
+        
         var parameters = method.GetParameters();
-        if (parameters.Length != 1)
+        if (parameters.Length != 2) // Expect 2 parameters now
             return false;
-
-        var paramType = parameters[0].ParameterType;
-        if (!IsListOfCode(paramType))
+        
+        // First parameter should be string (for class name)
+        if (parameters[0].ParameterType != typeof(string))
             return false;
-
-        if (!IsListOfCode(method.ReturnType))
+        
+        // Second parameter should be List<Code>
+        if (!IsListOfCode(parameters[1].ParameterType))
             return false;
-
-        return true;
+        
+        return IsListOfCode(method.ReturnType);
     }
 
     private static bool IsListOfCode(Type type)

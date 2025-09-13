@@ -20,7 +20,8 @@ public class MixinMethodInfo
     {
         try
         {
-            var result = Method.Invoke(null, new object[] { originalCodes });
+            // Pass both className (from attribute) and codes
+            var result = Method.Invoke(null, new object[] { Attribute.ClassName, originalCodes });
             return (List<Code>)result!;
         }
         catch (TargetInvocationException ex)
