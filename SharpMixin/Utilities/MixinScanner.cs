@@ -1,6 +1,7 @@
 using System.Reflection;
 using SharpASM.Models;
 using SharpASM.Models.Code;
+using SharpASM.Models.Struct.Attribute;
 using SharpMixin.Attributes;
 using SharpMixin.Models;
 
@@ -71,16 +72,16 @@ public static class MixinScanner
             return false;
 
         var parameters = method.GetParameters();
-        if (parameters.Length != 2) // Expect 2 parameters now
+        if (parameters.Length != 2)
             return false;
 
         if (parameters[0].ParameterType != typeof(Class))
             return false;
 
-        if (!IsListOfCode(parameters[1].ParameterType))
+        if (parameters[1].ParameterType != typeof(CodeAttributeStruct))
             return false;
 
-        return IsListOfCode(method.ReturnType);
+        return method.ReturnType == typeof(CodeAttributeStruct);
     }
 
     private static bool IsListOfCode(Type type)
