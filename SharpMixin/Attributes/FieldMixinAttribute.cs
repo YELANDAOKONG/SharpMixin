@@ -9,7 +9,6 @@ public sealed class FieldMixinAttribute : Attribute
     public string FieldName { get; }
     public string FieldDescriptor { get; }
     public NameType NameType { get; }
-    
     public int Priority { get; set; }
 
     public FieldMixinAttribute(

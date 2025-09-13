@@ -2,12 +2,11 @@ using SharpMixin.Models;
 
 namespace SharpMixin.Attributes;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public sealed class ClassMixinAttribute : Attribute
 {
     public string ClassName { get; }
     public NameType NameType { get; }
-    
     public int Priority { get; set; }
 
     public ClassMixinAttribute(

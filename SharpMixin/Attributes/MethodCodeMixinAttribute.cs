@@ -9,7 +9,6 @@ public sealed class MethodCodeMixinAttribute : Attribute
     public string MethodName { get; }
     public string MethodSignature { get; }
     public NameType NameType { get; }
-    
     public int Priority { get; set; }
 
     public MethodCodeMixinAttribute(
@@ -25,6 +24,6 @@ public sealed class MethodCodeMixinAttribute : Attribute
         NameType = nameType;
         Priority = priority;
     }
-
+        
     // public string? Note { get; set; }
 }

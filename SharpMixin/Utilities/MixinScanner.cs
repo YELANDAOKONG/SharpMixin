@@ -9,57 +9,51 @@ namespace SharpMixin.Utilities;
 
 public static class MixinScanner
 {
-    public static List<MixinInfo> ScanAllMixinTypes(Assembly assembly)
+    public static List<MixinInfo> ScanAllMixinTypes(Assembly assembly, bool classLevelDefined = true)
     {
         var mixins = new List<MixinInfo>();
-
         foreach (var type in assembly.GetTypes())
         {
-            var classAttributes = type.GetCustomAttributes<ClassMixinAttribute>();
-            foreach (var classAttr in classAttributes)
+            if (classLevelDefined)
             {
-                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(m => ValidateClassMixinMethodSignature(m));
-
-                foreach (var method in validMethods)
-                {
-                    mixins.Add(new ClassMixinInfo(method, classAttr));
-                }
+                if (!type.IsDefined(typeof(MixinAttribute))) continue;
             }
-
-            var methodAttributes = type.GetCustomAttributes<MethodMixinAttribute>();
-            foreach (var methodAttr in methodAttributes)
+            foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
             {
-                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(m => ValidateMethodMixinMethodSignature(m));
-
-                foreach (var method in validMethods)
+                var classAttrs = method.GetCustomAttributes<ClassMixinAttribute>();
+                foreach (var attr in classAttrs)
                 {
-                    mixins.Add(new MethodMixinInfo(method, methodAttr));
+                    if (ValidateClassMixinMethodSignature(method))
+                    {
+                        mixins.Add(new ClassMixinInfo(method, attr));
+                    }
                 }
-            }
 
-            var methodCodeAttributes = type.GetCustomAttributes<MethodCodeMixinAttribute>();
-            foreach (var methodCodeAttr in methodCodeAttributes)
-            {
-                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(m => ValidateMethodCodeMixinMethodSignature(m));
-
-                foreach (var method in validMethods)
+                var methodAttrs = method.GetCustomAttributes<MethodMixinAttribute>();
+                foreach (var attr in methodAttrs)
                 {
-                    mixins.Add(new MethodCodeMixinInfo(method, methodCodeAttr));
+                    if (ValidateMethodMixinMethodSignature(method))
+                    {
+                        mixins.Add(new MethodMixinInfo(method, attr));
+                    }
                 }
-            }
 
-            var fieldAttributes = type.GetCustomAttributes<FieldMixinAttribute>();
-            foreach (var fieldAttr in fieldAttributes)
-            {
-                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(m => ValidateFieldMixinMethodSignature(m));
-
-                foreach (var method in validMethods)
+                var methodCodeAttrs = method.GetCustomAttributes<MethodCodeMixinAttribute>();
+                foreach (var attr in methodCodeAttrs)
                 {
-                    mixins.Add(new FieldMixinInfo(method, fieldAttr));
+                    if (ValidateMethodCodeMixinMethodSignature(method))
+                    {
+                        mixins.Add(new MethodCodeMixinInfo(method, attr));
+                    }
+                }
+
+                var fieldAttrs = method.GetCustomAttributes<FieldMixinAttribute>();
+                foreach (var attr in fieldAttrs)
+                {
+                    if (ValidateFieldMixinMethodSignature(method))
+                    {
+                        mixins.Add(new FieldMixinInfo(method, attr));
+                    }
                 }
             }
         }
