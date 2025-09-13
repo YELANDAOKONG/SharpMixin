@@ -3,7 +3,7 @@ using SharpMixin.Models;
 namespace SharpMixin.Attributes;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-public sealed class MethodMixinAttribute : Attribute
+public sealed class MethodCodeMixinAttribute : Attribute
 {
     public string ClassName { get; }
     public string MethodName { get; }
@@ -12,7 +12,7 @@ public sealed class MethodMixinAttribute : Attribute
     
     public int Priority { get; set; }
 
-    public MethodMixinAttribute(
+    public MethodCodeMixinAttribute(
         string className,
         string methodName,
         string methodSignature,
@@ -25,4 +25,6 @@ public sealed class MethodMixinAttribute : Attribute
         NameType = nameType;
         Priority = priority;
     }
+
+    // public string? Note { get; set; }
 }

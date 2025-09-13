@@ -9,53 +9,73 @@ namespace SharpMixin.Utilities;
 
 public static class MixinScanner
 {
-    public static List<MixinMethodInfo> ScanMixinMethods(Assembly assembly)
+    public static List<MixinInfo> ScanAllMixinTypes(Assembly assembly)
     {
-        var mixinMethods = new List<MixinMethodInfo>();
+        var mixins = new List<MixinInfo>();
 
         foreach (var type in assembly.GetTypes())
         {
-            var classAttributes = type.GetCustomAttributes<MethodMixinAttribute>();
+            var classAttributes = type.GetCustomAttributes<ClassMixinAttribute>();
             foreach (var classAttr in classAttributes)
             {
                 var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(ValidateMixinMethodSignature);
+                    .Where(m => ValidateClassMixinMethodSignature(m));
 
                 foreach (var method in validMethods)
                 {
-                    mixinMethods.Add(new MixinMethodInfo(method, classAttr));
+                    mixins.Add(new ClassMixinInfo(method, classAttr));
                 }
             }
 
-            var allMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-            foreach (var method in allMethods)
+            var methodAttributes = type.GetCustomAttributes<MethodMixinAttribute>();
+            foreach (var methodAttr in methodAttributes)
             {
-                var methodAttributes = method.GetCustomAttributes<MethodMixinAttribute>();
-                foreach (var methodAttr in methodAttributes)
-                {
-                    if (!ValidateMixinMethodSignature(method))
-                    {
-                        throw new InvalidOperationException(
-                            $"Method {type.Name}.{method.Name} with MethodMixinAttribute must be static and have signature: static List<Code> MethodName(List<Code> codes)");
-                    }
+                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => ValidateMethodMixinMethodSignature(m));
 
-                    mixinMethods.Add(new MixinMethodInfo(method, methodAttr));
+                foreach (var method in validMethods)
+                {
+                    mixins.Add(new MethodMixinInfo(method, methodAttr));
+                }
+            }
+
+            var methodCodeAttributes = type.GetCustomAttributes<MethodCodeMixinAttribute>();
+            foreach (var methodCodeAttr in methodCodeAttributes)
+            {
+                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => ValidateMethodCodeMixinMethodSignature(m));
+
+                foreach (var method in validMethods)
+                {
+                    mixins.Add(new MethodCodeMixinInfo(method, methodCodeAttr));
+                }
+            }
+
+            var fieldAttributes = type.GetCustomAttributes<FieldMixinAttribute>();
+            foreach (var fieldAttr in fieldAttributes)
+            {
+                var validMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => ValidateFieldMixinMethodSignature(m));
+
+                foreach (var method in validMethods)
+                {
+                    mixins.Add(new FieldMixinInfo(method, fieldAttr));
                 }
             }
         }
 
-        return mixinMethods.OrderBy(m => m.Attribute.Priority).ToList();
+        return mixins.OrderBy(m => m.Priority).ToList();
     }
 
-    public static List<MixinMethodInfo> ScanAllLoadedAssemblies()
+    public static List<MixinInfo> ScanAllLoadedAssemblies()
     {
-        var mixinMethods = new List<MixinMethodInfo>();
+        var mixins = new List<MixinInfo>();
         
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             try
             {
-                mixinMethods.AddRange(ScanMixinMethods(assembly));
+                mixins.AddRange(ScanAllMixinTypes(assembly));
             }
             catch (ReflectionTypeLoadException)
             {
@@ -63,10 +83,43 @@ public static class MixinScanner
             }
         }
 
-        return mixinMethods;
+        return mixins;
     }
 
-    private static bool ValidateMixinMethodSignature(MethodInfo method)
+    private static bool ValidateClassMixinMethodSignature(MethodInfo method)
+    {
+        if (!method.IsStatic)
+            return false;
+
+        var parameters = method.GetParameters();
+        if (parameters.Length != 1)
+            return false;
+
+        if (parameters[0].ParameterType != typeof(Class))
+            return false;
+
+        return method.ReturnType == typeof(Class);
+    }
+
+    private static bool ValidateMethodMixinMethodSignature(MethodInfo method)
+    {
+        if (!method.IsStatic)
+            return false;
+
+        var parameters = method.GetParameters();
+        if (parameters.Length != 2)
+            return false;
+
+        if (parameters[0].ParameterType != typeof(Class))
+            return false;
+
+        if (parameters[1].ParameterType != typeof(Method))
+            return false;
+
+        return method.ReturnType == typeof(Method);
+    }
+
+    private static bool ValidateMethodCodeMixinMethodSignature(MethodInfo method)
     {
         if (!method.IsStatic)
             return false;
@@ -84,19 +137,21 @@ public static class MixinScanner
         return method.ReturnType == typeof(CodeAttributeStruct);
     }
 
-    private static bool IsListOfCode(Type type)
+    private static bool ValidateFieldMixinMethodSignature(MethodInfo method)
     {
-        if (!type.IsGenericType)
+        if (!method.IsStatic)
             return false;
 
-        var genericTypeDef = type.GetGenericTypeDefinition();
-        if (genericTypeDef != typeof(List<>))
+        var parameters = method.GetParameters();
+        if (parameters.Length != 2)
             return false;
 
-        var genericArgs = type.GetGenericArguments();
-        if (genericArgs.Length != 1)
+        if (parameters[0].ParameterType != typeof(Class))
             return false;
 
-        return genericArgs[0] == typeof(Code);
+        if (parameters[1].ParameterType != typeof(Field))
+            return false;
+
+        return method.ReturnType == typeof(Field);
     }
 }

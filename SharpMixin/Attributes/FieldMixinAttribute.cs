@@ -3,25 +3,25 @@ using SharpMixin.Models;
 namespace SharpMixin.Attributes;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-public sealed class MethodMixinAttribute : Attribute
+public sealed class FieldMixinAttribute : Attribute
 {
     public string ClassName { get; }
-    public string MethodName { get; }
-    public string MethodSignature { get; }
+    public string FieldName { get; }
+    public string FieldDescriptor { get; }
     public NameType NameType { get; }
     
     public int Priority { get; set; }
 
-    public MethodMixinAttribute(
+    public FieldMixinAttribute(
         string className,
-        string methodName,
-        string methodSignature,
+        string fieldName,
+        string fieldDescriptor,
         NameType nameType = NameType.Default,
         int priority = 1000)
     {
         ClassName = className ?? throw new ArgumentNullException(nameof(className));
-        MethodName = methodName ?? throw new ArgumentNullException(nameof(methodName));
-        MethodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
+        FieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
+        FieldDescriptor = fieldDescriptor ?? throw new ArgumentNullException(nameof(fieldDescriptor));
         NameType = nameType;
         Priority = priority;
     }
