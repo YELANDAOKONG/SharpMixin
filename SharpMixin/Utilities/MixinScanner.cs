@@ -3,7 +3,7 @@ using SharpASM.Models.Code;
 using SharpMixin.Attributes;
 using SharpMixin.Models;
 
-namespace SharpMixin.Core;
+namespace SharpMixin.Utilities;
 
 public static class MixinScanner
 {
