@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>1.0.4.2</Version>
+        <Version>1.0.4.3</Version>
         <Title>SharpMixin</Title>
         <Authors>YELANDAOKONG</Authors>
         <Description>SharpMixin (SharpASM)</Description>
@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="SharpMC.SharpASM" Version="1.0.3.3" />
+      <PackageReference Include="SharpMC.SharpASM" Version="1.0.3.4" />
     </ItemGroup>
 
     <ItemGroup>
