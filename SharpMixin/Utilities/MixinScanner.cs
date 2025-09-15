@@ -117,17 +117,20 @@ public static class MixinScanner
     {
         if (!method.IsStatic)
             return false;
-
+        
         var parameters = method.GetParameters();
-        if (parameters.Length != 2)
+        if (parameters.Length != 3) 
             return false;
-
+        
         if (parameters[0].ParameterType != typeof(Class))
             return false;
-
-        if (parameters[1].ParameterType != typeof(CodeAttributeStruct))
+        
+        if (parameters[1].ParameterType != typeof(Method))
             return false;
-
+        
+        if (parameters[2].ParameterType != typeof(CodeAttributeStruct))
+            return false;
+        
         return method.ReturnType == typeof(CodeAttributeStruct);
     }
 
