@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="SharpMC.SharpASM" Version="1.0.3.4" />
+      <PackageReference Include="SharpMC.SharpASM" Version="1.0.3.5" />
     </ItemGroup>
 
     <ItemGroup>
